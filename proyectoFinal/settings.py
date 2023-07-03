@@ -86,7 +86,7 @@ import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age = 500)
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/proyectoFinal'
+        default='postgresql://postgres:postgres@localhost:5432/proyectoFinal',
         conn_max_age=600
     )
     
