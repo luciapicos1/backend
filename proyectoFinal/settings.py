@@ -24,8 +24,12 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','qqmEnO2p42_5XvHUHQo2CMy0npDDf3X
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'True'
-ALLOWED_HOSTS = ["djangorailway-production.up.railway.app", "127.0.0.1", "localhost"]
+DEBUG = 'RENDER' not in os.environ
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 CSRF_TRUSTED_ORIGINS = ['https://djangorailway-production.up.railway.app']
 
 # Application definition
@@ -48,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'proyectoFinal.urls'
@@ -78,23 +83,15 @@ WSGI_APPLICATION = 'proyectoFinal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 import dj_database_url
-#db_from_env = dj_database_url.config(conn_max_age = 500)
-#DATABASES = {'default': {}}
-#DATABASES['default'].update(db_from_env)
-db_from_env = dj_database_url.config(default='sqlite:///:memory:')
-
-# Actualiza la configuración de la base de datos con el valor de DATABASE_URL
+db_from_env = dj_database_url.config(conn_max_age = 500)
 DATABASES = {
-    'default': db_from_env
+    'default': dj_database_url.config(
+        default='postgresql://postgres:postgres@localhost:5432/proyectoFinal'
+        conn_max_age=600
+    )
+    
 }
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-   #     'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-#}
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -128,7 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'static/'
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
