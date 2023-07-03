@@ -2,6 +2,11 @@
 name = "proyectoFinal"
 version = "0.1.0"
 description = ""
+authors = ["Lucia Picos <luciapicosmaiztegui@gmail.com>"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -10,6 +15,3 @@ dj-database-url = "^0.5.0"
 psycopg2-binary = "^2.9.1"
 whitenoise = { version = "^5.3.0", extras = ["brotli"] }
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
